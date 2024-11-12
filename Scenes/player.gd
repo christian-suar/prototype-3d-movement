@@ -6,6 +6,7 @@ const WALK_SPEED = 2.0
 const JUMP_VELOCITY = 4.5
 const gravity = 9.8
 var sensitivity = 0.004
+
 # bob is short for bobble (camera bobble) 
 # freq is how frequent the bobble happens
 # amp is how much the camera moves (short for amplitude)
@@ -16,8 +17,16 @@ var t_bob = 0.0
 @onready var head = $HeadPivot
 @onready var head_camera = $HeadPivot/Camera3D
 
+#coyote time variables
+@onready var coyote_frames = 1000
+@onready var coyote = false
+@onready var last_floor = false
+@onready var jumping = false
+
 func _ready():
+	$CoyoteTimer.wait_time = coyote_frames / 60.0
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	
 
 func _unhandled_input(event: InputEvent):
 	if event is InputEventMouseMotion:
@@ -40,8 +49,14 @@ func _physics_process(delta):
 		velocity.y -= gravity * delta
 
 	# Handle jump.
-	if Input.is_action_just_pressed("jump") and is_on_floor():
+	if Input.is_action_just_pressed("jump") and (is_on_floor() or coyote):
 		velocity.y = JUMP_VELOCITY
+		jumping = true
+		
+	# Checking if the player isn't on the floor, was just on the floor, and if they are not jumping yet 
+	if !is_on_floor() and last_floor and !jumping:
+		coyote = true
+		$CoyoteTimer.start()
 
 	# Handle Sprint
 	if Input.is_action_pressed("sprint"):
@@ -70,6 +85,8 @@ func _physics_process(delta):
 	
 	move_and_slide()
 	
+	last_floor = is_on_floor()
+	
 	#frames
 	print("Frames: " + str(Engine.get_frames_per_second()))
 	
@@ -78,3 +95,7 @@ func _headbob(time) -> Vector3:
 	pos.y = sin(time * bob_freq) * bob_amp
 	pos.x = cos(time * bob_freq/2) * bob_amp 
 	return pos
+
+
+func _on_coyote_timer_timeout() -> void:
+	coyote = false
