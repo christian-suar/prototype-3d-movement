@@ -18,7 +18,7 @@ var t_bob = 0.0
 @onready var head_camera = $HeadPivot/Camera3D
 
 #coyote time variables
-@onready var coyote_frames = 1000
+@onready var coyote_frames = 12
 @onready var coyote = false
 @onready var last_floor = false
 @onready var jumping = false
@@ -54,9 +54,10 @@ func _physics_process(delta):
 		jumping = true
 		
 	# Checking if the player isn't on the floor, was just on the floor, and if they are not jumping yet 
-	if !is_on_floor() and last_floor and !jumping:
+	if !is_on_floor() and !jumping and last_floor:
 		coyote = true
 		$CoyoteTimer.start()
+		print("coyotee")
 
 	# Handle Sprint
 	if Input.is_action_pressed("sprint"):
@@ -88,7 +89,7 @@ func _physics_process(delta):
 	last_floor = is_on_floor()
 	
 	#frames
-	print("Frames: " + str(Engine.get_frames_per_second()))
+	#print("Frames: " + str(Engine.get_frames_per_second()))
 	
 func _headbob(time) -> Vector3:
 	var pos = Vector3.ZERO
@@ -99,3 +100,4 @@ func _headbob(time) -> Vector3:
 
 func _on_coyote_timer_timeout() -> void:
 	coyote = false
+	print("coyotee time out")

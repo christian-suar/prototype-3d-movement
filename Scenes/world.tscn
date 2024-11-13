@@ -20,7 +20,7 @@ albedo_color = Color(0.345098, 0.615686, 0.239216, 1)
 [node name="World" type="Node3D"]
 
 [node name="Player" parent="." instance=ExtResource("1_cydb4")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0489582, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0510418, 0)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_nnpvn")
